@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Order API</title>
+</head>
+<body>
+  <h2>Test Order API</h2>
+
+  <button onclick="placeTestOrder()">
+    Place Test Order
+  </button>
+
+  <pre id="result"></pre>
+
+  <script>
+    async function placeTestOrder() {
+      const result = document.getElementById("result");
+
+      result.textContent = "Sending order...";
+
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/orders",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              customer: {
+                name: "Test Customer",
+                phone: "9876543210",
+                address: "Saharanpur, Uttar Pradesh",
+              },
+              items: [
+                {
+                  productName: "Fresh Milk",
+                  price: 60,
+                  quantity: 2,
+                  image: "",
+                },
+              ],
+              totalAmount: 120,
+              paymentMethod: "Cash on Delivery",
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        result.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        console.error(error);
+
+        result.textContent =
+          "Error: " + error.message;
+      }
+    }
+  </script>
+</body>
+</html>
