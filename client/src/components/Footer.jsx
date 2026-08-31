@@ -49,7 +49,7 @@ function Footer() {
               </a>
 
               <a
-                href="#"
+                href="https://www.instagram.com/kamboj_bakery?igsi=MW40bnU3OWFieGczOA%3D%3D&utm_source=qr"
                 aria-label="Instagram"
                 className="flex h-10 w-10 items-center justify-center rounded-full border border-[#6d4730] text-sm font-bold transition hover:bg-[#e7b178] hover:text-[#3b200f]"
               >
@@ -172,9 +172,9 @@ function Footer() {
                 />
 
                 <p className="text-sm leading-6 text-[#d7bdab]">
-                  Your Store Address
-                  <br />
-                  Dehradun, Uttarakhand
+                  Kalsiya Road, Chhutmalpur,
+<br />
+Saharanpur
                 </p>
               </div>
 
@@ -189,7 +189,8 @@ function Footer() {
                   href="tel:+919999999999"
                   className="text-sm text-[#d7bdab] transition hover:text-white"
                 >
-                  +91 99999 99999
+                  7037555623
+                       &  9411693337
                 </a>
               </div>
 
@@ -204,7 +205,7 @@ function Footer() {
                   href="mailto:hello@kambojdairy.com"
                   className="text-sm text-[#d7bdab] transition hover:text-white"
                 >
-                  hello@kambojdairy.com
+                   kambozaryan007@gmail.com
                 </a>
               </div>
 
@@ -216,7 +217,7 @@ function Footer() {
                 />
 
                 <p className="text-sm text-[#d7bdab]">
-                  Mon - Sun: 8:00 AM - 9:00 PM
+                  Mon - Sun: 6:00 AM - 11:00 PM
                 </p>
               </div>
 

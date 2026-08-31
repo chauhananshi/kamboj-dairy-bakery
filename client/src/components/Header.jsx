@@ -1349,7 +1349,7 @@ export default function Header() {
         <div className="mx-auto flex h-8 max-w-7xl items-center justify-between px-4 text-[10px] sm:px-6 sm:text-xs lg:px-8">
           <p className="flex items-center gap-1 font-medium">
             <CakeSlice size={13} />
-            Free Delivery on Orders Above ₹499
+            Delivery available within 20 km only
           </p>
 
           <div className="hidden items-center gap-5 sm:flex">
@@ -1362,7 +1362,7 @@ export default function Header() {
 
             <span className="flex items-center gap-1">
               <Phone size={12} />
-              +91 98765 43210
+              +91 9411693337
             </span>
           </div>
         </div>
