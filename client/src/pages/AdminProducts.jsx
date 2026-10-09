@@ -505,6 +505,66 @@ function AdminProducts() {
     }));
   };
 
+ 
+
+  const handleImageUpload = async (e) => {
+  const file = e.target.files?.[0];
+
+  if (!file) return;
+
+  try {
+    setSaving(true);
+
+    const uploadData = new FormData();
+    uploadData.append("file", file);
+    uploadData.append(
+      "upload_preset",
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+    );
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${
+        import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+      }/image/upload`,
+      {
+        method: "POST",
+        body: uploadData,
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || "Image upload failed");
+    }
+
+    setFormData((current) => ({
+      ...current,
+      image: data.secure_url,
+    }));
+  } catch (error) {
+    console.error("Cloudinary upload error:", error);
+    alert(error.message || "Failed to upload image");
+  } finally {
+    setSaving(false);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   const openAddForm = () => {
     setEditingProduct(null);
     setFormData(initialForm);
@@ -925,14 +985,53 @@ function AdminProducts() {
                 <option value="Combos">Combos</option>
               </select>
 
-              <input
+              {/* <input
                 type="text"
                 name="image"
                 placeholder="Product Image URL"
                 value={formData.image}
                 onChange={handleChange}
                 className="rounded-xl border border-[#ddcbbd] px-4 py-3 outline-none"
-              />
+              /> */}
+
+                <div className="rounded-xl border border-[#ddcbbd] p-4">
+  <label className="mb-2 block text-sm font-bold text-[#4a2c1b]">
+    Product Image
+  </label>
+
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageUpload}
+    className="w-full text-sm"
+  />
+
+  {formData.image && (
+    <div className="mt-4">
+      <img
+        src={formData.image}
+        alt="Product Preview"
+        className="h-40 w-full rounded-xl object-cover"
+      />
+    </div>
+  )}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
               <textarea
                 name="description"

@@ -192,13 +192,16 @@ function AdminDashboard() {
         const [productsResponse, ordersResponse] = await Promise.all([
           // fetch("http://localhost:5000/api/products"),
           fetch(`${import.meta.env.VITE_API_URL}/api/products`),
-          fetch("http://localhost:5000/api/orders"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/orders`),
+          //fetch("http://localhost:5000/api/orders"),
         ]);
 
         const productsData = await productsResponse.json();
+       // console.log("PRODUCTS DATA:", productsData);
         const ordersData = await ordersResponse.json();
 
         const products = productsData.products || [];
+        // console.log("PRODUCTS ARRAY:", products);
         const orders = ordersData.orders || [];
 
         const pendingOrders = orders.filter(
