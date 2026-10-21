@@ -664,6 +664,10 @@ const protectAdmin = require("../middleware/authMiddleware");
 const customerAuth = require("../middleware/customerAuth");
 
 const router = express.Router();
+// const { Resend } = require("resend");
+const nodemailer = require("nodemailer");
+
+
 
 // Create a new order
 router.post("/", async (req, res) => {
@@ -735,6 +739,150 @@ router.post("/", async (req, res) => {
       totalAmount,
       paymentMethod: paymentMethod || "Cash on Delivery",
     });
+
+
+
+   
+
+        // Send new order notification to bakery owner
+//     try {
+//       if (
+//         process.env.RESEND_API_KEY &&
+//         process.env.OWNER_EMAIL &&
+//         process.env.RESEND_FROM_EMAIL
+//       ) {
+//         const resend = new Resend(process.env.RESEND_API_KEY);
+
+//         const { error } = await resend.emails.send({
+//           from: process.env.RESEND_FROM_EMAIL,
+//           to: [process.env.OWNER_EMAIL],
+//           subject: "New Order Received - Kamboj Dairy & Bakery",
+//           text: `
+// A new order has been placed!
+
+// Order ID: ${order._id}
+
+// Customer Name: ${order.customer.name}
+// Phone: ${order.customer.phone}
+// Address: ${order.customer.address}
+
+// Ordered Products:
+// ${order.items
+//   .map(
+//     (item, index) =>
+//       `${index + 1}. ${item.productName} | Quantity: ${item.quantity} | Price: ₹${item.price} | Subtotal: ₹${item.price * item.quantity}`
+//   )
+//   .join("\n")}
+
+// Total Amount: ₹${order.totalAmount}
+// Payment Method: ${order.paymentMethod}
+//           `,
+//         });
+
+//         if (error) {
+//           console.error("Order notification email failed:", error);
+//         }
+//       } else {
+//         console.log("Email notification skipped: required environment variables are missing.");
+//       }
+//     } catch (emailError) {
+//       console.error("Order notification email failed:", emailError.message);
+//     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // Send new order notification to bakery owner
+    try {
+      if (
+        process.env.EMAIL_USER &&
+        process.env.EMAIL_PASS &&
+        process.env.OWNER_EMAIL
+      ) {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+
+        await transporter.sendMail({
+          from: process.env.EMAIL_USER,
+          to: process.env.OWNER_EMAIL,
+          subject: "New Order Received - Kamboj Dairy & Bakery",
+          text: `
+A new order has been placed!
+
+Order ID: ${order._id}
+
+Customer Name: ${order.customer.name}
+Phone: ${order.customer.phone}
+Address: ${order.customer.address}
+
+Ordered Products:
+${order.items
+  .map(
+    (item, index) =>
+      `${index + 1}. ${item.productName} | Quantity: ${item.quantity} | Price: ₹${item.price} | Subtotal: ₹${item.price * item.quantity}`
+  )
+  .join("\n")}
+
+Total Amount: ₹${order.totalAmount}
+Payment Method: ${order.paymentMethod}
+          `,
+        });
+
+        console.log("Order notification email sent successfully.");
+      } else {
+        console.log("Email notification skipped: required environment variables are missing.");
+      }
+    } catch (emailError) {
+      console.error("Order notification email failed:", emailError.message);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     res.status(201).json({
       success: true,
