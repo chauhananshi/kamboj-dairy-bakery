@@ -654,7 +654,7 @@
 
 
 
-
+const { Resend } = require("resend");
 
 const express = require("express");
 const jwt = require("jsonwebtoken");
@@ -819,15 +819,24 @@ router.post("/", async (req, res) => {
 
 
     // Send new order notification using Resend API
-    try {
-      const apiKey = process.env.RESEND_API_KEY;
-      const ownerEmail = process.env.OWNER_EMAIL;
+        // Send order confirmation response immediately
+    res.status(201).json({
+      success: true,
+      message: "Order placed successfully",
+      order,
+    });
 
-      if (!apiKey || !ownerEmail) {
-        console.error(
-          "Email notification skipped: RESEND_API_KEY or OWNER_EMAIL is missing."
-        );
-      } else {
+    // Send email notification in background
+    (async () => {
+      try {
+        const apiKey = process.env.RESEND_API_KEY;
+        const ownerEmail = process.env.OWNER_EMAIL;
+
+        if (!apiKey || !ownerEmail) {
+          console.error("Resend API key or owner email is missing.");
+          return;
+        }
+
         const resend = new Resend(apiKey);
 
         const itemsText = order.items
@@ -861,10 +870,12 @@ Payment Method: ${order.paymentMethod}`,
         } else {
           console.log("Resend accepted order notification:", data.id);
         }
+      } catch (emailError) {
+        console.error("Background email failed:", emailError.message);
       }
-    } catch (emailError) {
-      console.error("Order notification email failed:", emailError.message);
-    }  } catch (error) {
+    })();
+
+  } catch (error) {
     console.error("Order creation failed:", error.message);
 
     res.status(500).json({
