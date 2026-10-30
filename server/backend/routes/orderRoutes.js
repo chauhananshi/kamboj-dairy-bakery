@@ -665,7 +665,8 @@ const customerAuth = require("../middleware/customerAuth");
 
 const router = express.Router();
 // const { Resend } = require("resend");
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
+
 
 
 
@@ -817,28 +818,30 @@ router.post("/", async (req, res) => {
 
 
 
-
-    // Send new order notification to bakery owner
+    // Send new order notification using Resend API
     try {
-      if (
-        process.env.EMAIL_USER &&
-        process.env.EMAIL_PASS &&
-        process.env.OWNER_EMAIL
-      ) {
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-          },
-        });
+      const apiKey = process.env.RESEND_API_KEY;
+      const ownerEmail = process.env.OWNER_EMAIL;
 
-        await transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: process.env.OWNER_EMAIL,
+      if (!apiKey || !ownerEmail) {
+        console.error(
+          "Email notification skipped: RESEND_API_KEY or OWNER_EMAIL is missing."
+        );
+      } else {
+        const resend = new Resend(apiKey);
+
+        const itemsText = order.items
+          .map(
+            (item, index) =>
+              `${index + 1}. ${item.productName} | Quantity: ${item.quantity} | Price: ₹${item.price} | Subtotal: ₹${item.price * item.quantity}`
+          )
+          .join("\n");
+
+        const { data, error } = await resend.emails.send({
+          from: "Kamboj Dairy & Bakery <onboarding@resend.dev>",
+          to: [ownerEmail],
           subject: "New Order Received - Kamboj Dairy & Bakery",
-          text: `
-A new order has been placed!
+          text: `A new order has been placed!
 
 Order ID: ${order._id}
 
@@ -847,49 +850,21 @@ Phone: ${order.customer.phone}
 Address: ${order.customer.address}
 
 Ordered Products:
-${order.items
-  .map(
-    (item, index) =>
-      `${index + 1}. ${item.productName} | Quantity: ${item.quantity} | Price: ₹${item.price} | Subtotal: ₹${item.price * item.quantity}`
-  )
-  .join("\n")}
+${itemsText}
 
 Total Amount: ₹${order.totalAmount}
-Payment Method: ${order.paymentMethod}
-          `,
+Payment Method: ${order.paymentMethod}`,
         });
 
-        console.log("Order notification email sent successfully.");
-      } else {
-        console.log("Email notification skipped: required environment variables are missing.");
+        if (error) {
+          console.error("Resend email error:", error);
+        } else {
+          console.log("Resend accepted order notification:", data.id);
+        }
       }
     } catch (emailError) {
       console.error("Order notification email failed:", emailError.message);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    res.status(201).json({
-      success: true,
-      message: "Order placed successfully",
-      order,
-    });
-  } catch (error) {
+    }  } catch (error) {
     console.error("Order creation failed:", error.message);
 
     res.status(500).json({
